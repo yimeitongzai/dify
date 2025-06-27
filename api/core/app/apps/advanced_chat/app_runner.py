@@ -28,8 +28,9 @@ from core.workflow.enums import SystemVariableKey
 from core.workflow.variable_loader import VariableLoader
 from core.workflow.workflow_entry import WorkflowEntry
 from extensions.ext_database import db
+from models import Workflow
 from models.enums import UserFrom
-from models.model import App, Conversation, EndUser, Message, MessageAnnotation
+from models.model import App, Conversation, Message, MessageAnnotation
 from models.workflow import ConversationVariable, WorkflowType
 
 logger = logging.getLogger(__name__)
@@ -42,41 +43,33 @@ class AdvancedChatAppRunner(WorkflowBasedAppRunner):
 
     def __init__(
         self,
+        *,
         application_generate_entity: AdvancedChatAppGenerateEntity,
         queue_manager: AppQueueManager,
         conversation: Conversation,
         message: Message,
         dialogue_count: int,
         variable_loader: VariableLoader,
+        workflow: Workflow,
+        system_user_id: str,
+        app: App,
     ) -> None:
-        super().__init__(queue_manager, variable_loader)
+        super().__init__(
+            queue_manager=queue_manager,
+            variable_loader=variable_loader,
+            app_id=application_generate_entity.app_config.app_id,
+        )
         self.application_generate_entity = application_generate_entity
         self.conversation = conversation
         self.message = message
         self._dialogue_count = dialogue_count
-
-    def _get_app_id(self) -> str:
-        return self.application_generate_entity.app_config.app_id
+        self._workflow = workflow
+        self.system_user_id = system_user_id
+        self._app = app
 
     def run(self) -> None:
         app_config = self.application_generate_entity.app_config
         app_config = cast(AdvancedChatAppConfig, app_config)
-
-        app_record = db.session.query(App).filter(App.id == app_config.app_id).first()
-        if not app_record:
-            raise ValueError("App not found")
-
-        workflow = self.get_workflow(app_model=app_record, workflow_id=app_config.workflow_id)
-        if not workflow:
-            raise ValueError("Workflow not initialized")
-
-        user_id = None
-        if self.application_generate_entity.invoke_from in {InvokeFrom.WEB_APP, InvokeFrom.SERVICE_API}:
-            end_user = db.session.query(EndUser).filter(EndUser.id == self.application_generate_entity.user_id).first()
-            if end_user:
-                user_id = end_user.session_id
-        else:
-            user_id = self.application_generate_entity.user_id
 
         workflow_callbacks: list[WorkflowCallback] = []
         if dify_config.DEBUG:
@@ -85,14 +78,14 @@ class AdvancedChatAppRunner(WorkflowBasedAppRunner):
         if self.application_generate_entity.single_iteration_run:
             # if only single iteration run is requested
             graph, variable_pool = self._get_graph_and_variable_pool_of_single_iteration(
-                workflow=workflow,
+                workflow=self._workflow,
                 node_id=self.application_generate_entity.single_iteration_run.node_id,
                 user_inputs=dict(self.application_generate_entity.single_iteration_run.inputs),
             )
         elif self.application_generate_entity.single_loop_run:
             # if only single loop run is requested
             graph, variable_pool = self._get_graph_and_variable_pool_of_single_loop(
-                workflow=workflow,
+                workflow=self._workflow,
                 node_id=self.application_generate_entity.single_loop_run.node_id,
                 user_inputs=dict(self.application_generate_entity.single_loop_run.inputs),
             )
@@ -103,7 +96,7 @@ class AdvancedChatAppRunner(WorkflowBasedAppRunner):
 
             # moderation
             if self.handle_input_moderation(
-                app_record=app_record,
+                app_record=self._app,
                 app_generate_entity=self.application_generate_entity,
                 inputs=inputs,
                 query=query,
@@ -113,7 +106,7 @@ class AdvancedChatAppRunner(WorkflowBasedAppRunner):
 
             # annotation reply
             if self.handle_annotation_reply(
-                app_record=app_record,
+                app_record=self._app,
                 message=self.message,
                 query=query,
                 app_generate_entity=self.application_generate_entity,
@@ -133,7 +126,7 @@ class AdvancedChatAppRunner(WorkflowBasedAppRunner):
                         ConversationVariable.from_variable(
                             app_id=self.conversation.app_id, conversation_id=self.conversation.id, variable=variable
                         )
-                        for variable in workflow.conversation_variables
+                        for variable in self._workflow.conversation_variables
                     ]
                     session.add_all(db_conversation_variables)
                 # Convert database entities to variables.
@@ -146,7 +139,7 @@ class AdvancedChatAppRunner(WorkflowBasedAppRunner):
                 SystemVariableKey.QUERY: query,
                 SystemVariableKey.FILES: files,
                 SystemVariableKey.CONVERSATION_ID: self.conversation.id,
-                SystemVariableKey.USER_ID: user_id,
+                SystemVariableKey.USER_ID: self.system_user_id,
                 SystemVariableKey.DIALOGUE_COUNT: self._dialogue_count,
                 SystemVariableKey.APP_ID: app_config.app_id,
                 SystemVariableKey.WORKFLOW_ID: app_config.workflow_id,
@@ -157,23 +150,23 @@ class AdvancedChatAppRunner(WorkflowBasedAppRunner):
             variable_pool = VariablePool(
                 system_variables=system_inputs,
                 user_inputs=inputs,
-                environment_variables=workflow.environment_variables,
+                environment_variables=self._workflow.environment_variables,
                 conversation_variables=conversation_variables,
             )
 
             # init graph
-            graph = self._init_graph(graph_config=workflow.graph_dict)
+            graph = self._init_graph(graph_config=self._workflow.graph_dict)
 
         db.session.close()
 
         # RUN WORKFLOW
         workflow_entry = WorkflowEntry(
-            tenant_id=workflow.tenant_id,
-            app_id=workflow.app_id,
-            workflow_id=workflow.id,
-            workflow_type=WorkflowType.value_of(workflow.type),
+            tenant_id=self._workflow.tenant_id,
+            app_id=self._workflow.app_id,
+            workflow_id=self._workflow.id,
+            workflow_type=WorkflowType.value_of(self._workflow.type),
             graph=graph,
-            graph_config=workflow.graph_dict,
+            graph_config=self._workflow.graph_dict,
             user_id=self.application_generate_entity.user_id,
             user_from=(
                 UserFrom.ACCOUNT
