@@ -37,7 +37,6 @@ import { DATASET_DEFAULT } from '@/config'
 import type { DataSet } from '@/models/datasets'
 import { fetchDatasets } from '@/service/datasets'
 import useNodeCrud from '@/app/components/workflow/nodes/_base/hooks/use-node-crud'
-import useOneStepRun from '@/app/components/workflow/nodes/_base/hooks/use-one-step-run'
 import { useCurrentProviderAndModel, useModelListAndDefaultModelAndCurrentProviderAndModel } from '@/app/components/header/account-setting/model-provider-page/hooks'
 import { ModelTypeEnum } from '@/app/components/header/account-setting/model-provider-page/declarations'
 import useAvailableVarList from '@/app/components/workflow/nodes/_base/hooks/use-available-var-list'
@@ -46,7 +45,7 @@ import { useDatasetsDetailStore } from '../../datasets-detail-store/store'
 const useConfig = (
   id: string,
   data: KnowledgeRetrievalNodeType,
-  onDataChange?: (data: KnowledgeRetrievalNodeType) => void
+  onDataChange?: (data: KnowledgeRetrievalNodeType) => void,
 ) => {
   const { nodesReadOnly: readOnly } = useNodesReadOnly()
   const isChatMode = useIsChatMode()
@@ -73,7 +72,7 @@ const useConfig = (
   const handleQueryVarChange = useCallback((value: string | ValueSelector, varKindType: VarType, varInfo?: Var) => {
     onDataChange?.({
       ...data,
-      query_variable_selector: value as ValueSelector
+      query_variable_selector: value as ValueSelector,
     })
   }, [data, onDataChange])
 
@@ -177,7 +176,7 @@ const useConfig = (
       }
     })
     setInputs(newInput)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentProvider?.provider, currentModel, currentRerankModel, rerankDefaultModel])
   const [selectedDatasets, setSelectedDatasets] = useState<DataSet[]>([])
   const [rerankModelOpen, setRerankModelOpen] = useState(false)
@@ -234,7 +233,7 @@ const useConfig = (
       setInputs(newInputs)
       setSelectedDatasetsLoaded(true)
     })()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -246,7 +245,7 @@ const useConfig = (
     setInputs(produce(inputs, (draft) => {
       draft.query_variable_selector = query_variable_selector
     }))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleOnDatasetsChange = useCallback((newDatasets: DataSet[]) => {
@@ -283,32 +282,6 @@ const useConfig = (
   const filterVar = useCallback((varPayload: Var) => {
     return varPayload.type === VarType.string
   }, [])
-
-  // single run
-  const {
-    isShowSingleRun,
-    hideSingleRun,
-    runningStatus,
-    handleRun,
-    handleStop,
-    runInputData,
-    setRunInputData,
-    runResult,
-  } = useOneStepRun<KnowledgeRetrievalNodeType>({
-    id,
-    data: inputs,
-    defaultRunInputData: {
-      query: '',
-    },
-  })
-
-  const query = runInputData.query
-  const setQuery = useCallback((newQuery: string) => {
-    setRunInputData({
-      ...runInputData,
-      query: newQuery,
-    })
-  }, [runInputData, setRunInputData])
 
   const handleMetadataFilterModeChange = useCallback((newMode: MetadataFilteringModeEnum) => {
     setInputs(produce(inputRef.current, (draft) => {
@@ -420,7 +393,7 @@ const useConfig = (
   const handleDatasetIdsChange = useCallback((ids: string[]) => {
     onDataChange?.({
       ...data,
-      dataset_ids: ids
+      dataset_ids: ids,
     })
   }, [data, onDataChange])
 
@@ -436,14 +409,6 @@ const useConfig = (
     selectedDatasets: selectedDatasets.filter(d => d.name),
     selectedDatasetsLoaded,
     handleOnDatasetsChange,
-    isShowSingleRun,
-    hideSingleRun,
-    runningStatus,
-    handleRun,
-    handleStop,
-    query,
-    setQuery,
-    runResult,
     rerankModelOpen,
     setRerankModelOpen,
     handleMetadataFilterModeChange,
