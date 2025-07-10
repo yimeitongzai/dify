@@ -515,6 +515,11 @@ services:
     volumes:
       # Mount the storage directory to the container, for storing user files.
       - ./volumes/app/storage:/app/api/storage
+      # 只挂载自定义节点目录
+      - ../api/core/workflow/nodes/auto_knowledge_retrieval:/app/api/core/workflow/nodes/auto_knowledge_retrieval
+      # 挂载修改后的配置文件
+      - ../api/core/workflow/nodes/enums.py:/app/api/core/workflow/nodes/enums.py
+      - ../api/core/workflow/nodes/node_mapping.py:/app/api/core/workflow/nodes/node_mapping.py
     networks:
       - ssrf_proxy_network
       - default
@@ -543,6 +548,10 @@ services:
     volumes:
       # Mount the storage directory to the container, for storing user files.
       - ./volumes/app/storage:/app/api/storage
+      # 相同的挂载配置
+      - ../api/core/workflow/nodes/auto_knowledge_retrieval:/app/api/core/workflow/nodes/auto_knowledge_retrieval
+      - ../api/core/workflow/nodes/enums.py:/app/api/core/workflow/nodes/enums.py
+      - ../api/core/workflow/nodes/node_mapping.py:/app/api/core/workflow/nodes/node_mapping.py
     networks:
       - ssrf_proxy_network
       - default
@@ -589,6 +598,12 @@ services:
                -c 'effective_cache_size=${POSTGRES_EFFECTIVE_CACHE_SIZE:-4096MB}'
     volumes:
       - ./volumes/db/data:/var/lib/postgresql/data
+      # 只挂载自定义前端组件目录
+      - ../web/app/components/workflow/nodes/auto-knowledge-retrieval:/app/web/app/components/workflow/nodes/auto-knowledge-retrieval
+      # 挂载修改后的前端配置文件
+      - ../web/app/components/workflow/types.ts:/app/web/app/components/workflow/types.ts
+      - ../web/app/components/workflow/block-selector/constants.tsx:/app/web/app/components/workflow/block-selector/constants.tsx
+      - ../web/app/components/workflow/nodes/constants.ts:/app/web/app/components/workflow/nodes/constants.ts
     healthcheck:
       test: [ 'CMD', 'pg_isready', '-h', 'db', '-U', '${PGUSER:-postgres}', '-d', '${POSTGRES_DB:-dify}' ]
       interval: 1s

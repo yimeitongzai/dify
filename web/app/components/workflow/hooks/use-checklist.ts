@@ -59,6 +59,10 @@ export const useChecklist = (nodes: Node[], edges: Edge[]) => {
         _datasets,
       } as CommonNodeType<KnowledgeRetrievalNodeType>
     }
+    // AutoKnowledgeRetrieval 不需要特殊的数据集处理，因为它自动获取所有数据集
+    if (data.type === BlockEnum.AutoKnowledgeRetrieval) {
+      checkData = data
+    }
     return checkData
   }, [datasetsDetail])
 
@@ -170,6 +174,10 @@ export const useChecklistBeforePublish = () => {
         ...data,
         _datasets,
       } as CommonNodeType<KnowledgeRetrievalNodeType>
+    }
+    // AutoKnowledgeRetrieval 不需要特殊的数据集处理，因为它自动获取所有数据集
+    if (data.type === BlockEnum.AutoKnowledgeRetrieval) {
+      checkData = data
     }
     return checkData
   }, [])

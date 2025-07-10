@@ -10,6 +10,8 @@ import LLMNode from './llm/node'
 import LLMPanel from './llm/panel'
 import KnowledgeRetrievalNode from './knowledge-retrieval/node'
 import KnowledgeRetrievalPanel from './knowledge-retrieval/panel'
+import AutoKnowledgeRetrievalNode from './auto-knowledge-retrieval/node' // 新增自定义节点
+import AutoKnowledgeRetrievalPanel from './auto-knowledge-retrieval/panel' // 新增自定义节点
 import QuestionClassifierNode from './question-classifier/node'
 import QuestionClassifierPanel from './question-classifier/panel'
 import IfElseNode from './if-else/node'
@@ -46,6 +48,7 @@ export const NodeComponentMap: Record<string, ComponentType<any>> = {
   [BlockEnum.Answer]: AnswerNode,
   [BlockEnum.LLM]: LLMNode,
   [BlockEnum.KnowledgeRetrieval]: KnowledgeRetrievalNode,
+  [BlockEnum.AutoKnowledgeRetrieval]: AutoKnowledgeRetrievalNode, // 新增自定义节点
   [BlockEnum.QuestionClassifier]: QuestionClassifierNode,
   [BlockEnum.IfElse]: IfElseNode,
   [BlockEnum.Code]: CodeNode,
@@ -69,6 +72,7 @@ export const PanelComponentMap: Record<string, ComponentType<any>> = {
   [BlockEnum.Answer]: AnswerPanel,
   [BlockEnum.LLM]: LLMPanel,
   [BlockEnum.KnowledgeRetrieval]: KnowledgeRetrievalPanel,
+  [BlockEnum.AutoKnowledgeRetrieval]: AutoKnowledgeRetrievalPanel, // 新增自定义节点
   [BlockEnum.QuestionClassifier]: QuestionClassifierPanel,
   [BlockEnum.IfElse]: IfElsePanel,
   [BlockEnum.Code]: CodePanel,

@@ -22,6 +22,7 @@ import type { LoopNodeType } from '../nodes/loop/types'
 export const canRunBySingle = (nodeType: BlockEnum) => {
   return nodeType === BlockEnum.LLM
     || nodeType === BlockEnum.KnowledgeRetrieval
+    || nodeType === BlockEnum.AutoKnowledgeRetrieval
     || nodeType === BlockEnum.Code
     || nodeType === BlockEnum.TemplateTransform
     || nodeType === BlockEnum.QuestionClassifier

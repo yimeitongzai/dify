@@ -21,6 +21,12 @@ export const BLOCKS: Block[] = [
   },
   {
     classification: BlockClassificationEnum.Default,
+    type: BlockEnum.AutoKnowledgeRetrieval,  // 新增自定义节点
+    title: 'Auto Knowledge Retrieval',
+    description: 'Automatically retrieve from all external knowledge bases',
+  },
+  {
+    classification: BlockClassificationEnum.Default,
     type: BlockEnum.End,
     title: 'End',
   },

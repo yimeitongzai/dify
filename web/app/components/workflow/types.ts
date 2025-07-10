@@ -23,6 +23,7 @@ export enum BlockEnum {
   Answer = 'answer',
   LLM = 'llm',
   KnowledgeRetrieval = 'knowledge-retrieval',
+  AutoKnowledgeRetrieval = 'auto-knowledge-retrieval',  // 新增自定义节点
   QuestionClassifier = 'question-classifier',
   IfElse = 'if-else',
   Code = 'code',

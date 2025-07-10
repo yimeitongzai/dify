@@ -11,6 +11,7 @@ from core.workflow.nodes.http_request import HttpRequestNode
 from core.workflow.nodes.if_else import IfElseNode
 from core.workflow.nodes.iteration import IterationNode, IterationStartNode
 from core.workflow.nodes.knowledge_retrieval import KnowledgeRetrievalNode
+from core.workflow.nodes.auto_knowledge_retrieval import AutoKnowledgeRetrievalNode # 新增自定义节点
 from core.workflow.nodes.list_operator import ListOperatorNode
 from core.workflow.nodes.llm import LLMNode
 from core.workflow.nodes.loop import LoopEndNode, LoopNode, LoopStartNode
@@ -45,6 +46,11 @@ NODE_TYPE_CLASSES_MAPPING: Mapping[NodeType, Mapping[str, type[BaseNode]]] = {
     NodeType.KNOWLEDGE_RETRIEVAL: {
         LATEST_VERSION: KnowledgeRetrievalNode,
         "1": KnowledgeRetrievalNode,
+    },
+        # 新增自定义节点映射
+    NodeType.AUTO_KNOWLEDGE_RETRIEVAL: {
+        LATEST_VERSION: AutoKnowledgeRetrievalNode,
+        "1": AutoKnowledgeRetrievalNode,
     },
     NodeType.IF_ELSE: {
         LATEST_VERSION: IfElseNode,

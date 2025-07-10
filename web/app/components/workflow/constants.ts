@@ -4,6 +4,7 @@ import StartNodeDefault from './nodes/start/default'
 import AnswerDefault from './nodes/answer/default'
 import LLMDefault from './nodes/llm/default'
 import KnowledgeRetrievalDefault from './nodes/knowledge-retrieval/default'
+import AutoKnowledgeRetrievalDefault from './nodes/auto-knowledge-retrieval/default'
 import QuestionClassifierDefault from './nodes/question-classifier/default'
 import IfElseDefault from './nodes/if-else/default'
 import CodeDefault from './nodes/code/default'
@@ -77,6 +78,15 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     getAvailablePrevNodes: KnowledgeRetrievalDefault.getAvailablePrevNodes,
     getAvailableNextNodes: KnowledgeRetrievalDefault.getAvailableNextNodes,
     checkValid: KnowledgeRetrievalDefault.checkValid,
+  },
+  [BlockEnum.AutoKnowledgeRetrieval]: {
+    author: 'Dify',
+    about: '',
+    availablePrevNodes: [],
+    availableNextNodes: [],
+    getAvailablePrevNodes: AutoKnowledgeRetrievalDefault.getAvailablePrevNodes,
+    getAvailableNextNodes: AutoKnowledgeRetrievalDefault.getAvailableNextNodes,
+    checkValid: AutoKnowledgeRetrievalDefault.checkValid,
   },
   [BlockEnum.IfElse]: {
     author: 'Dify',
@@ -277,6 +287,12 @@ export const NODES_INITIAL_DATA = {
     retrieval_mode: 'single',
     ...KnowledgeRetrievalDefault.defaultValue,
   },
+  [BlockEnum.AutoKnowledgeRetrieval]: {
+    type: BlockEnum.AutoKnowledgeRetrieval,
+    title: '',
+    desc: '',
+    ...AutoKnowledgeRetrievalDefault.defaultValue,
+  },
   [BlockEnum.IfElse]: {
     type: BlockEnum.IfElse,
     title: '',
@@ -467,7 +483,7 @@ export const RETRIEVAL_OUTPUT_STRUCT = `{
 }`
 
 export const SUPPORT_OUTPUT_VARS_NODE = [
-  BlockEnum.Start, BlockEnum.LLM, BlockEnum.KnowledgeRetrieval, BlockEnum.Code, BlockEnum.TemplateTransform,
+  BlockEnum.Start, BlockEnum.LLM, BlockEnum.KnowledgeRetrieval, BlockEnum.AutoKnowledgeRetrieval, BlockEnum.Code, BlockEnum.TemplateTransform,
   BlockEnum.HttpRequest, BlockEnum.Tool, BlockEnum.VariableAssigner, BlockEnum.VariableAggregator, BlockEnum.QuestionClassifier,
   BlockEnum.ParameterExtractor, BlockEnum.Iteration, BlockEnum.Loop,
   BlockEnum.DocExtractor, BlockEnum.ListFilter,

@@ -7,6 +7,7 @@ class NodeType(StrEnum):
     ANSWER = "answer"
     LLM = "llm"
     KNOWLEDGE_RETRIEVAL = "knowledge-retrieval"
+    AUTO_KNOWLEDGE_RETRIEVAL = "auto-knowledge-retrieval"  # 新增自定义节点
     IF_ELSE = "if-else"
     CODE = "code"
     TEMPLATE_TRANSFORM = "template-transform"

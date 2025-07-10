@@ -245,6 +245,10 @@ const formatItem = (
       res.vars = KNOWLEDGE_RETRIEVAL_OUTPUT_STRUCT
       break
     }
+    case BlockEnum.AutoKnowledgeRetrieval: {
+      res.vars = KNOWLEDGE_RETRIEVAL_OUTPUT_STRUCT
+      break
+    }
 
     case BlockEnum.Code: {
       const {
@@ -973,6 +977,10 @@ export const getNodeUsedVars = (node: Node): ValueSelector[] => {
       res = [(data as KnowledgeRetrievalNodeType).query_variable_selector]
       break
     }
+    case BlockEnum.AutoKnowledgeRetrieval: {
+      res = [(data as any).query_variable_selector]
+      break
+    }
     case BlockEnum.IfElse: {
       res = (data as IfElseNodeType).conditions?.map((c) => {
         return c.variable_selector || []
@@ -1080,6 +1088,10 @@ export const getNodeUsedVarPassToServerKey = (node: Node, valueSelector: ValueSe
       break
     }
     case BlockEnum.KnowledgeRetrieval: {
+      res = 'query'
+      break
+    }
+    case BlockEnum.AutoKnowledgeRetrieval: {
       res = 'query'
       break
     }
@@ -1197,6 +1209,12 @@ export const updateNodeVars = (oldNode: Node, oldVarSelector: ValueSelector, new
       }
       case BlockEnum.KnowledgeRetrieval: {
         const payload = data as KnowledgeRetrievalNodeType
+        if (payload.query_variable_selector.join('.') === oldVarSelector.join('.'))
+          payload.query_variable_selector = newVarSelector
+        break
+      }
+      case BlockEnum.AutoKnowledgeRetrieval: {
+        const payload = data as any
         if (payload.query_variable_selector.join('.') === oldVarSelector.join('.'))
           payload.query_variable_selector = newVarSelector
         break
@@ -1412,6 +1430,10 @@ export const getNodeOutputVars = (node: Node, isChatMode: boolean): ValueSelecto
     }
 
     case BlockEnum.KnowledgeRetrieval: {
+      varsToValueSelectorList(KNOWLEDGE_RETRIEVAL_OUTPUT_STRUCT, [id], res)
+      break
+    }
+    case BlockEnum.AutoKnowledgeRetrieval: {
       varsToValueSelectorList(KNOWLEDGE_RETRIEVAL_OUTPUT_STRUCT, [id], res)
       break
     }

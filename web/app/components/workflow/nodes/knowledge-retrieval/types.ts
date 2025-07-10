@@ -13,6 +13,12 @@ import type {
   WeightedScoreEnum,
 } from '@/models/datasets'
 
+export enum MetadataFilteringModeEnum {
+  DISABLED = 'disabled',
+  SIMPLE = 'simple',
+  ADVANCED = 'advanced'
+}
+
 export type MultipleRetrievalConfig = {
   top_k: number
   score_threshold: number | null | undefined
@@ -70,12 +76,6 @@ export enum ComparisonOperator {
   after = 'after',
 }
 
-export enum MetadataFilteringModeEnum {
-  disabled = 'disabled',
-  automatic = 'automatic',
-  manual = 'manual',
-}
-
 export enum MetadataFilteringVariableType {
   string = 'string',
   number = 'number',
@@ -84,15 +84,20 @@ export enum MetadataFilteringVariableType {
 }
 
 export type MetadataFilteringCondition = {
-  id: string
-  name: string
-  comparison_operator: ComparisonOperator
-  value?: string | number
+  field: string
+  operator: string
+  value: string
 }
 
 export type MetadataFilteringConditions = {
   logical_operator: LogicalOperator
   conditions: MetadataFilteringCondition[]
+}
+
+export type Dataset = {
+  id: string
+  name: string
+  description?: string
 }
 
 export type KnowledgeRetrievalNodeType = CommonNodeType & {
@@ -102,9 +107,12 @@ export type KnowledgeRetrievalNodeType = CommonNodeType & {
   multiple_retrieval_config?: MultipleRetrievalConfig
   single_retrieval_config?: SingleRetrievalConfig
   _datasets?: DataSet[]
-  metadata_filtering_mode?: MetadataFilteringModeEnum
+  metadata_filtering_mode: MetadataFilteringModeEnum
   metadata_filtering_conditions?: MetadataFilteringConditions
   metadata_model_config?: ModelConfig
+  hideDatasetSelector?: boolean
+  readonly?: boolean
+  selected_datasets?: Dataset[]
 }
 
 export type HandleAddCondition = (metadataItem: MetadataInDoc) => void
