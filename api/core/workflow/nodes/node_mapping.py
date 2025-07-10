@@ -2,6 +2,7 @@ from collections.abc import Mapping
 
 from core.workflow.nodes.agent.agent_node import AgentNode
 from core.workflow.nodes.answer import AnswerNode
+from core.workflow.nodes.auto_knowledge_retrieval import AutoKnowledgeRetrievalNode  # 新增自定义节点
 from core.workflow.nodes.base import BaseNode
 from core.workflow.nodes.code import CodeNode
 from core.workflow.nodes.document_extractor import DocumentExtractorNode
@@ -11,7 +12,6 @@ from core.workflow.nodes.http_request import HttpRequestNode
 from core.workflow.nodes.if_else import IfElseNode
 from core.workflow.nodes.iteration import IterationNode, IterationStartNode
 from core.workflow.nodes.knowledge_retrieval import KnowledgeRetrievalNode
-from core.workflow.nodes.auto_knowledge_retrieval import AutoKnowledgeRetrievalNode # 新增自定义节点
 from core.workflow.nodes.list_operator import ListOperatorNode
 from core.workflow.nodes.llm import LLMNode
 from core.workflow.nodes.loop import LoopEndNode, LoopNode, LoopStartNode

@@ -1,5 +1,5 @@
-from typing import cast
 import json
+from typing import cast
 
 from core.workflow.nodes import NodeType
 from core.workflow.nodes.knowledge_retrieval.entities import KnowledgeRetrievalNodeData
@@ -83,7 +83,9 @@ def get_dataset_ids_from_workflow(published_workflow: Workflow) -> set[str]:
                 node["data"]["dataset_ids"] = external_dataset_ids
                 # 同时写入 _datasets 供前端展示
                 node["data"]["_datasets"] = [
-                    {"id": ds.id, "name": ds.name} for ds in db.session.query(Dataset).filter(Dataset.id.in_(external_dataset_ids)).all()
+                    {"id": ds.id, "name": ds.name} for ds in db.session.query(Dataset).filter(
+                        Dataset.id.in_(external_dataset_ids)
+                        ).all()
                 ]
             dataset_ids.update(dataset_id for dataset_id in node_data.dataset_ids)
         except Exception:

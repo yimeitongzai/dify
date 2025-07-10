@@ -1,14 +1,14 @@
 import logging
-from typing import Any, Dict, List, Optional, cast
+from typing import cast
 
+from core.variables import StringSegment
+from core.workflow.entities.node_entities import NodeRunResult
 from core.workflow.nodes.enums import NodeType
 from core.workflow.nodes.knowledge_retrieval import KnowledgeRetrievalNode
 from core.workflow.nodes.knowledge_retrieval.entities import KnowledgeRetrievalNodeData
 from extensions.ext_database import db
-from models.dataset import Dataset, AppDatasetJoin
-from core.workflow.entities.node_entities import NodeRunResult
+from models.dataset import Dataset
 from models.workflow import WorkflowNodeExecutionStatus
-from core.variables import StringSegment
 
 logger = logging.getLogger(__name__)
 
