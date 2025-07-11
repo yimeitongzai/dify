@@ -83,45 +83,43 @@ const Panel: FC<NodePanelProps<KnowledgeRetrievalNodeType>> = ({
           />
         </Field>
 
-        {!data.hideDatasetSelector && (
-          <Field
-            title={t(`${i18nPrefix}.knowledge`)}
-            required
-            operations={
-              <div className='flex items-center space-x-1'>
-                <RetrievalConfig
-                  payload={{
-                    retrieval_mode: inputs.retrieval_mode,
-                    multiple_retrieval_config: inputs.multiple_retrieval_config,
-                    single_retrieval_config: inputs.single_retrieval_config,
-                  }}
-                  onRetrievalModeChange={handleRetrievalModeChange}
-                  onMultipleRetrievalConfigChange={handleMultipleRetrievalConfigChange}
-                  singleRetrievalModelConfig={inputs.single_retrieval_config?.model}
-                  onSingleRetrievalModelChange={handleModelChanged as any}
-                  onSingleRetrievalModelParamsChange={handleCompletionParamsChange}
-                  readonly={readOnly || !selectedDatasets.length}
-                  openFromProps={rerankModelOpen}
-                  onOpenFromPropsChange={handleOpenFromPropsChange}
-                  selectedDatasets={selectedDatasets}
+        <Field
+          title={t(`${i18nPrefix}.knowledge`)}
+          required
+          operations={
+            <div className='flex items-center space-x-1'>
+              <RetrievalConfig
+                payload={{
+                  retrieval_mode: inputs.retrieval_mode,
+                  multiple_retrieval_config: inputs.multiple_retrieval_config,
+                  single_retrieval_config: inputs.single_retrieval_config,
+                }}
+                onRetrievalModeChange={handleRetrievalModeChange}
+                onMultipleRetrievalConfigChange={handleMultipleRetrievalConfigChange}
+                singleRetrievalModelConfig={inputs.single_retrieval_config?.model}
+                onSingleRetrievalModelChange={handleModelChanged as any}
+                onSingleRetrievalModelParamsChange={handleCompletionParamsChange}
+                readonly={readOnly || !selectedDatasets.length}
+                openFromProps={rerankModelOpen}
+                onOpenFromPropsChange={handleOpenFromPropsChange}
+                selectedDatasets={selectedDatasets}
+              />
+              {!readOnly && (<div className='h-3 w-px bg-divider-regular'></div>)}
+              {!readOnly && (
+                <AddKnowledge
+                  selectedIds={inputs.dataset_ids}
+                  onChange={handleOnDatasetsChange}
                 />
-                {!readOnly && (<div className='h-3 w-px bg-divider-regular'></div>)}
-                {!readOnly && (
-                  <AddKnowledge
-                    selectedIds={inputs.dataset_ids}
-                    onChange={handleOnDatasetsChange}
-                  />
-                )}
-              </div>
-            }
-          >
-            <DatasetList
-              list={selectedDatasets}
-              onChange={handleOnDatasetsChange}
-              readonly={readOnly}
-            />
-          </Field>
-        )}
+              )}
+            </div>
+          }
+        >
+          <DatasetList
+            list={selectedDatasets}
+            onChange={handleOnDatasetsChange}
+            readonly={readOnly}
+          />
+        </Field>
       </div>
       <div className='mb-2 py-2'>
         <MetadataFilter

@@ -42,17 +42,13 @@ import { ModelTypeEnum } from '@/app/components/header/account-setting/model-pro
 import useAvailableVarList from '@/app/components/workflow/nodes/_base/hooks/use-available-var-list'
 import { useDatasetsDetailStore } from '../../datasets-detail-store/store'
 
-const useConfig = (
-  id: string,
-  data: KnowledgeRetrievalNodeType,
-  onDataChange?: (data: KnowledgeRetrievalNodeType) => void,
-) => {
+const useConfig = (id: string, payload: KnowledgeRetrievalNodeType) => {
   const { nodesReadOnly: readOnly } = useNodesReadOnly()
   const isChatMode = useIsChatMode()
   const { getBeforeNodesInSameBranch } = useWorkflow()
   const startNode = getBeforeNodesInSameBranch(id).find(node => node.data.type === BlockEnum.Start)
   const startNodeId = startNode?.id
-  const { inputs, setInputs: doSetInputs } = useNodeCrud<KnowledgeRetrievalNodeType>(id, data)
+  const { inputs, setInputs: doSetInputs } = useNodeCrud<KnowledgeRetrievalNodeType>(id, payload)
   const updateDatasetsDetail = useDatasetsDetailStore(s => s.updateDatasetsDetail)
 
   const inputRef = useRef(inputs)
@@ -69,12 +65,12 @@ const useConfig = (
     inputRef.current = newInputs
   }, [doSetInputs])
 
-  const handleQueryVarChange = useCallback((value: string | ValueSelector, varKindType: VarType, varInfo?: Var) => {
-    onDataChange?.({
-      ...data,
-      query_variable_selector: value as ValueSelector,
+  const handleQueryVarChange = useCallback((newVar: ValueSelector | string) => {
+    const newInputs = produce(inputs, (draft) => {
+      draft.query_variable_selector = newVar as ValueSelector
     })
-  }, [data, onDataChange])
+    setInputs(newInputs)
+  }, [inputs, setInputs])
 
   const {
     currentProvider,
@@ -259,7 +255,7 @@ const useConfig = (
     const newInputs = produce(inputs, (draft) => {
       draft.dataset_ids = newDatasets.map(d => d.id)
 
-      if (data.retrieval_mode === RETRIEVE_TYPE.multiWay && newDatasets.length > 0) {
+      if (payload.retrieval_mode === RETRIEVE_TYPE.multiWay && newDatasets.length > 0) {
         const multipleRetrievalConfig = draft.multiple_retrieval_config
         draft.multiple_retrieval_config = getMultipleRetrievalConfig(multipleRetrievalConfig!, newDatasets, selectedDatasets, {
           provider: currentRerankProvider?.provider,
@@ -277,7 +273,7 @@ const useConfig = (
       || allExternal
     )
       setRerankModelOpen(true)
-  }, [inputs, setInputs, data.retrieval_mode, selectedDatasets, currentRerankModel, currentRerankProvider, updateDatasetsDetail])
+  }, [inputs, setInputs, payload.retrieval_mode, selectedDatasets, currentRerankModel, currentRerankProvider, updateDatasetsDetail])
 
   const filterVar = useCallback((varPayload: Var) => {
     return varPayload.type === VarType.string
@@ -390,13 +386,6 @@ const useConfig = (
     filterVar: filterNumberVar,
   })
 
-  const handleDatasetIdsChange = useCallback((ids: string[]) => {
-    onDataChange?.({
-      ...data,
-      dataset_ids: ids,
-    })
-  }, [data, onDataChange])
-
   return {
     readOnly,
     inputs,
@@ -422,7 +411,6 @@ const useConfig = (
     availableStringNodesWithParent,
     availableNumberVars,
     availableNumberNodesWithParent,
-    handleDatasetIdsChange,
   }
 }
 

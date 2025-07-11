@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react'
+import type { ValueSelector, Var } from '@/app/components/workflow/types'
+import type { VarType } from '@/app/components/workflow/nodes/tool/types'
 import produce from 'immer'
-import { AutoKnowledgeRetrievalNodeType } from './types'
+import type { AutoKnowledgeRetrievalNodeType } from './types'
 import { RETRIEVE_TYPE } from '@/types/app'
 import { fetchDatasets } from '@/service/datasets'
 import useNodeCrud from '@/app/components/workflow/nodes/_base/hooks/use-node-crud'
@@ -51,15 +53,16 @@ export const useConfig = (
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // 处理查询变量变更
-  const handleQueryVarChange = useCallback((value: string[]) => {
+  // 处理查询变量变更，兼容 VarReferencePicker 的 onChange 参数类型
+  const handleQueryVarChange = useCallback((value: string | ValueSelector, _varKindType?: VarType, _varInfo?: Var) => {
+    const selector = value as ValueSelector
     const newInputs = produce(inputRef.current, (draft) => {
-      draft.query_variable_selector = value
+      draft.query_variable_selector = selector
     })
     setInputs(newInputs)
   }, [setInputs])
 
-  // 处理检索模式变更  
+  // 处理检索模式变更
   const handleRetrievalModeChange = useCallback((mode: RETRIEVE_TYPE) => {
     const newInputs = produce(inputRef.current, (draft) => {
       draft.retrieval_mode = mode
@@ -119,4 +122,4 @@ export const useConfig = (
     handleAutoRetrievalToggle,
     handleExternalOnlyToggle,
   }
-} 
+}

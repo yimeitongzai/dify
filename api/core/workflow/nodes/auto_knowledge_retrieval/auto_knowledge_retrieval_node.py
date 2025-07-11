@@ -8,7 +8,7 @@ from core.workflow.nodes.knowledge_retrieval import KnowledgeRetrievalNode
 from core.workflow.nodes.knowledge_retrieval.entities import KnowledgeRetrievalNodeData
 from extensions.ext_database import db
 from models.dataset import Dataset
-from models.workflow import WorkflowNodeExecutionStatus
+from models.workflow import WorkflowNodeExecutionModel as WorkflowNodeExecutionStatus
 
 logger = logging.getLogger(__name__)
 
